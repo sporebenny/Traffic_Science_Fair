@@ -1,5 +1,13 @@
-
+# Python virtual environments
 venv/
+v12/
+
+# Python cache
 __pycache__/
 *.pyc
+
+# OSMnx cache
+cache/
+
+# VS Code
 .vscode/
