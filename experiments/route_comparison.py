@@ -2,6 +2,9 @@ import osmnx as ox
 import networkx as nx
 import matplotlib.pyplot as plt
 
+plt.rcParams["font.sans-serif"] = ["Microsoft JhengHei"]
+plt.rcParams["axes.unicode_minus"] = False
+
 
 
 def analyze_route(G, route):
@@ -672,24 +675,29 @@ print(
 
 print("\n正在繪製 Route...")
 
-
 fig, ax = ox.plot_graph_routes(
     G,
+
     routes=[
         shortest_distance_route,
         shortest_time_route,
         best_compromise_route
     ],
+
     route_colors=[
         "blue",
         "red",
         "green"
     ],
+
     route_linewidths=[
-        3,
-        3,
-        3
+        6,
+        4,
+        2
     ],
+
+    route_alpha=0.7,
+
     node_size=0,
     bgcolor="white",
     show=False,
@@ -702,8 +710,66 @@ ax.set_title(
     "Route Comparison"
 )
 
+from matplotlib.lines import Line2D
+
+legend_elements = [
+    Line2D([0], [0], color="blue", lw=3, label="Route 1 - Shortest Distance"),
+    Line2D([0], [0], color="red", lw=3, label="Route 2 - Shortest Time"),
+    Line2D([0], [0], color="green", lw=3, label="Route 3 - Compromise")
+]
+
+
+
+ax.legend(
+    handles=legend_elements,
+    loc="upper right"
+)
+
+# 標記起點與終點
+start_x = G.nodes[start_node]["x"]
+start_y = G.nodes[start_node]["y"]
+
+end_x = G.nodes[end_node]["x"]
+end_y = G.nodes[end_node]["y"]
+
+ax.scatter(
+    start_x,
+    start_y,
+    s=100,
+    c="black",
+    marker="o",
+    zorder=5
+)
+
+ax.scatter(
+    end_x,
+    end_y,
+    s=100,
+    c="black",
+    marker="X",
+    zorder=5
+)
+
+ax.text(
+    start_x,
+    start_y,
+    "  桃園車站",
+    fontsize=10,
+    weight="bold"
+)
+
+ax.text(
+    end_x,
+    end_y,
+    "  台北車站",
+    fontsize=10,
+    weight="bold"
+)
+
 
 plt.show()
+
+
 
 
 print("Route 圖繪製完成")
