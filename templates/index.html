@@ -1,9 +1,38 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 
 <head>
-    <title>Traffic Science Fair</title>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Traffic Science Fair
+    </title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #map {
+            width: 100%;
+            height: 80vh;
+        }
+
+    </style>
+
 </head>
 
 
@@ -13,10 +42,26 @@
         Traffic Science Fair System
     </h1>
 
-    <p>
+    <p style="text-align:center;">
         基於交通壅塞模型之多運具最佳化選擇系統
     </p>
+
+
+    <!-- Leaflet 地圖 -->
+    <div id="map"></div>
+
+
+    <!-- Leaflet JS -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+
+    <!-- 我們自己的地圖程式 -->
+    <script src="{{ url_for('static', filename='map.js') }}">
+    </script>
 
 </body>
 
 </html>
+
