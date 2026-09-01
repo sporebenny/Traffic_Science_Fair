@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import osmnx as ox
 
 
@@ -23,6 +23,32 @@ from experiments.route_comparison import (
     shortest_time_route,
     best_compromise_route
 )
+
+
+
+
+# ============================================================
+# Case 2：桃園車站 → 西門町
+# ============================================================
+
+from experiments.case2_route import (
+    route1 as case2_route1,
+    route2 as case2_route2,
+    route3 as case2_route3
+)
+
+# ============================================================
+# Case 3：桃園車站 → 信義計畫區
+# ============================================================
+
+from experiments.case3_route import (
+    route1 as case3_route1,
+    route2 as case3_route2,
+    route3 as case3_route3
+)
+
+
+
 
 
 # ============================================================
@@ -122,34 +148,129 @@ def home():
 # Route API
 # ============================================================
 
+# ============================================================
+# Route API
+# ============================================================
+
 @app.route("/api/routes")
 def routes():
 
+    case = request.args.get(
+        "case",
+        "1"
+    )
+
+
+    # ========================================================
+    # Case 1
+    # 桃園車站 → 台北車站
+    # ========================================================
+
+    if case == "1":
+
+        selected_routes = {
+
+            "route1": (
+                shortest_distance_route,
+                "length"
+            ),
+
+            "route2": (
+                shortest_time_route,
+                "travel_time"
+            ),
+
+            "route3": (
+                best_compromise_route,
+                "compromise_cost"
+            )
+
+        }
+
+
+    # ========================================================
+    # Case 2
+    # 桃園車站 → 西門町
+    # ========================================================
+
+    elif case == "2":
+
+        selected_routes = {
+
+            "route1": (
+                case2_route1,
+                "length"
+            ),
+
+            "route2": (
+                case2_route2,
+                "travel_time"
+            ),
+
+            "route3": (
+                case2_route3,
+                "compromise_cost"
+            )
+
+        }
+
+        
+    # ========================================================
+    # Case 3
+    # 桃園車站 → 信義計畫區
+    # ========================================================
+
+    elif case == "3":
+
+        selected_routes = {
+
+            "route1": (
+                case3_route1,
+                "length"
+            ),
+
+            "route2": (
+                case3_route2,
+                "travel_time"
+            ),
+
+            "route3": (
+                case3_route3,
+                "compromise_cost"
+            )
+
+        }
+
+
+
+
+
+
+    else:
+
+        return jsonify({
+            "error": "Unknown case"
+        }), 400
+
+
     return jsonify({
 
-        # Route 1
-        # 最短距離
         "route1": route_to_coordinates(
-            shortest_distance_route,
-            "length"
+            selected_routes["route1"][0],
+            selected_routes["route1"][1]
         ),
 
-        # Route 2
-        # 最短時間
         "route2": route_to_coordinates(
-            shortest_time_route,
-            "travel_time"
+            selected_routes["route2"][0],
+            selected_routes["route2"][1]
         ),
 
-        # Route 3
-        # 折衷 Route
         "route3": route_to_coordinates(
-            best_compromise_route,
-            "compromise_cost"
+            selected_routes["route3"][0],
+            selected_routes["route3"][1]
         )
 
     })
-
 
 # ============================================================
 # 啟動 Flask
