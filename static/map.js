@@ -91,11 +91,10 @@ const caseInfo = {
     },
 
     "3": {
-        endName: "信義計畫區",
+        endName: "信義計畫區（台北101）",
         endLat: 25.0330,
         endLon: 121.5654
     }
-
 };
 
 
@@ -144,8 +143,38 @@ function loadRoutes(caseNumber) {
             // 建立新 Route
             // ==========================
 
+
+            // ==========================
+            // Case 3 Route 延伸至研究終點
+            // ==========================
+
+            let displayRoute1 = data.route1;
+            let displayRoute2 = data.route2;
+            let displayRoute3 = data.route3;
+
+            if (caseNumber === "3") {
+
+                displayRoute1 = [
+                    ...data.route1,
+                    [25.0330, 121.5654]
+                ];
+
+                displayRoute2 = [
+                    ...data.route2,
+                    [25.0330, 121.5654]
+                ];
+
+                displayRoute3 = [
+                    ...data.route3,
+                    [25.0330, 121.5654]
+                ];
+            }
+
+
+            
+
             const route1 = L.polyline(
-                data.route1,
+                displayRoute1,
                 {
                     color: "blue",
                     weight: 6,
@@ -155,7 +184,7 @@ function loadRoutes(caseNumber) {
 
 
             const route2 = L.polyline(
-                data.route2,
+                displayRoute2,
                 {
                     color: "red",
                     weight: 4,
@@ -165,7 +194,7 @@ function loadRoutes(caseNumber) {
 
 
             const route3 = L.polyline(
-                data.route3,
+                displayRoute3,
                 {
                     color: "green",
                     weight: 2,

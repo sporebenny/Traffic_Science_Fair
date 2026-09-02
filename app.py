@@ -59,6 +59,12 @@ def route_to_coordinates(route, weight):
 
     coordinates = []
 
+    print("Route Node 數量:", len(route))
+    print("起點 Node:", route[0])
+    print("終點 Node:", route[-1])
+
+
+
     for i in range(len(route) - 1):
 
         u = route[i]
