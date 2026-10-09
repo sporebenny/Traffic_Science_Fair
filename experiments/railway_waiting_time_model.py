@@ -113,6 +113,47 @@ def calculate_waiting_time(ready_time, train_departure):
     return waiting_minutes
 
 
+
+def get_next_train(user_arrival_time):
+    """
+    根據使用者抵達桃園車站的時間，
+    回傳下一班可搭乘的台鐵班次及相關時間資料。
+    """
+
+    trains = load_train_data()
+
+    ready_time = calculate_ready_time(
+        user_arrival_time
+    )
+
+    next_train = find_next_train(
+        trains,
+        ready_time
+    )
+
+    if next_train is None:
+        return None
+
+    wait_minutes = calculate_waiting_time(
+        ready_time,
+        next_train["departure"]
+    )
+
+    return {
+        "train_no": next_train["train_no"],
+        "departure": next_train["departure"],
+        "arrival": next_train["arrival"],
+        "access_minutes": STATION_ACCESS_TIME,
+        "wait_minutes": wait_minutes,
+        "ride_minutes": float(
+            next_train["travel_minutes"]
+        ),
+    }
+
+
+
+
+
 # ============================================================
 # 8. 執行等待時間模型
 # ============================================================
