@@ -1,8 +1,22 @@
+
+import os
+
+# Flask 網站使用非互動式繪圖後端，不啟動 Tk 視窗
+os.environ["MPLBACKEND"] = "Agg"
+
 from flask import Flask, render_template, jsonify, request
 import osmnx as ox
 
 
+
 app = Flask(__name__)
+
+
+
+from experiments.railway_to_mrt_transfer_model import (
+    get_journey_results_as_dict,
+)
+
 
 
 # ============================================================
@@ -277,6 +291,50 @@ def routes():
         )
 
     })
+
+
+
+# ============================================================
+# Mission 15：大眾運輸旅程 API
+# 桃園車站 → 臺北車站 → 西門站
+# ============================================================
+
+@app.route("/api/transit")
+def transit():
+
+    user_arrival_time = request.args.get(
+        "arrival_time",
+        "08:30:00",
+    )
+
+    try:
+        results = get_journey_results_as_dict(
+            user_arrival_time
+        )
+
+    except ValueError:
+        return jsonify({
+            "error": (
+                "時間格式錯誤，請使用 HH:MM:SS，"
+                "例如 08:30:00。"
+            )
+        }), 400
+
+    if not results:
+        return jsonify({
+            "error": "找不到符合條件的臺鐵班次。"
+        }), 404
+
+    return jsonify({
+        "origin": "桃園車站",
+        "destination": "西門站",
+        "user_arrival_time": user_arrival_time,
+        "mode": "public_transport",
+        "scenario_count": len(results),
+        "results": results,
+    })
+
+
 
 # ============================================================
 # 啟動 Flask
