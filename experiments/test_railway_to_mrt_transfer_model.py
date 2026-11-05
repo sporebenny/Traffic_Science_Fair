@@ -29,7 +29,7 @@ class TestRailwayToMRTTransferModel(unittest.TestCase):
     def test_ximen_arrival_time(self):
         """09:00 可候車，捷運候車 3 分鐘、搭乘 2 分鐘，09:05 抵達。"""
         ready_time = datetime.strptime("09:00:00", "%H:%M:%S")
-        result = model.calculate_ximen_arrival_time(ready_time, 3)
+        result = model.calculate_ximen_arrival_time(ready_time, 3, 2)
         self.assertEqual(result.strftime("%H:%M:%S"), "09:05:00")
 
     def test_total_journey_minutes(self):
@@ -38,6 +38,7 @@ class TestRailwayToMRTTransferModel(unittest.TestCase):
             self.train,
             transfer_minutes=3,
             mrt_wait_minutes=3,
+            mrt_ride_minutes=2,
         )
         self.assertEqual(result, 65)
 
@@ -58,7 +59,7 @@ class TestRailwayToMRTTransferModel(unittest.TestCase):
                 + self.train["ride_minutes"]
                 + scenario["transfer_minutes"]
                 + scenario["mrt_wait_minutes"]
-                + model.MRT_RIDE_MINUTES
+                + scenario["mrt_ride_minutes"]
             )
             self.assertEqual(scenario["total_minutes"], expected_total)
 

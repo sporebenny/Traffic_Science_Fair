@@ -1,0 +1,4 @@
+﻿user_start_time,scenario_count,fastest_minutes,average_minutes,slowest_minutes,time_range_minutes,fastest_scenario_id,fastest_arrival_time,slowest_scenario_id,slowest_arrival_time,stage_1_name,stage_1_average_minutes,stage_2_name,stage_2_average_minutes,stage_3_name,stage_3_average_minutes,stage_4_name,stage_4_average_minutes,stage_5_name,stage_5_average_minutes,stage_6_name,stage_6_average_minutes
+07:30:00,9,51.0,57.0,63.0,12.0,PT-01,08:21:00,PT-09,08:33:00,車站進站,10.0,臺鐵候車,4.5,臺鐵乘車,31.5,轉乘,6.33,捷運候車,2.67,捷運乘車,2.0
+08:00:00,9,62.0,68.0,74.0,12.0,PT-01,09:02:00,PT-09,09:14:00,車站進站,10.0,臺鐵候車,6.0,臺鐵乘車,41.0,轉乘,6.33,捷運候車,2.67,捷運乘車,2.0
+08:30:00,9,69.0,75.0,81.0,12.0,PT-01,09:39:00,PT-09,09:51:00,車站進站,10.0,臺鐵候車,6.0,臺鐵乘車,48.0,轉乘,6.33,捷運候車,2.67,捷運乘車,2.0

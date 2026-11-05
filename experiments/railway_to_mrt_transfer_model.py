@@ -6,6 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from experiments.railway_waiting_time_model import get_next_train
+from experiments.mrt_travel_time_model import get_mrt_travel_time
 from dataclasses import dataclass, asdict
 from typing import Any
 
@@ -13,9 +14,11 @@ from typing import Any
 # 1. 模型參數
 # ============================================================
 
-# 臺北車站 → 西門站的模型行車時間
-# 後續仍需核對官方資料
-MRT_RIDE_MINUTES = 2
+# 臺北車站 → 西門站的捷運路段設定
+MRT_ORIGIN_CODE = "BL12"
+MRT_DESTINATION_CODE = "BL11"
+MRT_LINE = "BL"
+MRT_DIRECTION = "往頂埔"
 
 # 轉乘時間情境（研究假設，非實測平均值）
 TRANSFER_TIMES = [3, 6, 10]
@@ -96,18 +99,18 @@ def calculate_mrt_ready_time(
 
 def calculate_ximen_arrival_time(
     mrt_ready_time,
-    mrt_wait_minutes=0
+    mrt_wait_minutes,
+    mrt_ride_minutes
 ):
     """計算包含捷運候車與行車時間的預計抵達時間。"""
 
     total_mrt_minutes = (
-        mrt_wait_minutes + MRT_RIDE_MINUTES
+        mrt_wait_minutes + mrt_ride_minutes
     )
 
     return mrt_ready_time + timedelta(
         minutes=total_mrt_minutes
     )
-
 
 # ============================================================
 # 5. 計算全程旅行時間
@@ -116,7 +119,8 @@ def calculate_ximen_arrival_time(
 def calculate_total_minutes(
     train,
     transfer_minutes,
-    mrt_wait_minutes
+    mrt_wait_minutes,
+    mrt_ride_minutes
 ):
     """計算桃園車站至西門站的全程模型時間。"""
 
@@ -126,9 +130,8 @@ def calculate_total_minutes(
         + train["ride_minutes"]
         + transfer_minutes
         + mrt_wait_minutes
-        + MRT_RIDE_MINUTES
+        + mrt_ride_minutes
     )
-
 
 # ============================================================
 # 6. 計算單一出發時間的所有情境
@@ -154,6 +157,14 @@ def calculate_journey_scenarios(user_arrival_time):
     if train is None:
         return None, []
 
+    # 從捷運資料表取得臺北車站至西門站的乘車時間
+    mrt_ride_minutes = get_mrt_travel_time(
+        origin_code=MRT_ORIGIN_CODE,
+        destination_code=MRT_DESTINATION_CODE,
+        line=MRT_LINE,
+        direction=MRT_DIRECTION,
+    )
+
     # 臺鐵階段總時間
     tra_total_minutes = (
         train["access_minutes"]
@@ -172,13 +183,15 @@ def calculate_journey_scenarios(user_arrival_time):
         for mrt_wait_minutes in MRT_WAIT_TIMES:
             ximen_arrival_time = calculate_ximen_arrival_time(
                 mrt_ready_time,
-                mrt_wait_minutes
+                mrt_wait_minutes,
+                mrt_ride_minutes,
             )
 
             total_minutes = calculate_total_minutes(
                 train,
                 transfer_minutes,
-                mrt_wait_minutes
+                mrt_wait_minutes,
+                mrt_ride_minutes,
             )
 
             scenarios.append({
@@ -197,7 +210,7 @@ def calculate_journey_scenarios(user_arrival_time):
                 # 轉乘與捷運階段
                 "transfer_minutes": transfer_minutes,
                 "mrt_wait_minutes": mrt_wait_minutes,
-                "mrt_ride_minutes": MRT_RIDE_MINUTES,
+                "mrt_ride_minutes": mrt_ride_minutes,
 
                 # 全程結果
                 "ximen_arrival_time": (
